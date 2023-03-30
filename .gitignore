@@ -2,7 +2,10 @@
 
 notes/
 
-venv/
+songswap_venv/
 __pycache__/
 .vscode/
 *.pyc
+.cache
+instance/
+migrations/
