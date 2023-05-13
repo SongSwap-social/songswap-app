@@ -8,6 +8,12 @@ login_manager = LoginManager(app)
 login_manager.login_view = "success"
 
 
+@login_manager.unauthorized_handler
+def unauthorized_callback():
+    """Redirect unauthorized users to Login page."""
+    return redirect(url_for("unauth_home"))
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
