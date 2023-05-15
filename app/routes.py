@@ -1,11 +1,17 @@
 from flask import render_template, redirect, url_for, request, session
-from flask_login import LoginManager, current_user, login_required, login_user
+from flask_login import (
+    LoginManager,
+    current_user,
+    login_required,
+    login_user,
+    logout_user,
+)
 from app import app, db, sp
 from app.models import User
 from app.forms import RegistrationForm
 
 login_manager = LoginManager(app)
-login_manager.login_view = "success"
+login_manager.login_view = "/home"
 
 
 @login_manager.unauthorized_handler
@@ -129,3 +135,10 @@ def settings():
 @login_required
 def account():
     pass
+
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for("unauth_home"))

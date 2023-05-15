@@ -1,8 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="text-center">
-        <h1>Welcome, {{ user.username }}!</h1>
-        <p>You are now logged in.</p>
+<!-- An authenticated homepage written using Bulma CSS -->
+<section class="hero is-dark is-fullheight">
+    <!-- Welcome the user specifically -->
+
+    <div class="hero-body">
+        <div class="container has-text-centered">  <!-- Centered text in the container -->
+            <h1 class="title">
+                Welcome to SongSwap!
+            </h1>
+            <h2 class="subtitle">
+                This is the authenticated homepage.
+            </h2>
+            <p>
+                Welcome, {{ current_user.username }}!
+            </p>
+        </div>
     </div>
+
+</section>
+
 {% endblock %}
