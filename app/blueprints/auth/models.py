@@ -1,4 +1,4 @@
-from app import db
+from app.database import db
 
 
 class User(db.Model):
@@ -32,18 +32,3 @@ class User(db.Model):
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.spotify_id}')"
-
-
-# class Post(db.Model):
-#     pass
-
-
-# class Group(db.Model):
-#     pass
-
-
-# class GroupMember(db.Model):
-#     pass
-
-
-# Add other necessary models

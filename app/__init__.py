@@ -1,25 +1,24 @@
-import spotipy
-from flask import Flask
+# app/__init__.py
+from flask import Flask, render_template
 from flask_login import LoginManager
-from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from spotipy.oauth2 import SpotifyOAuth
+
+from app.database import db
+
+migrate = Migrate()
+login_manager = LoginManager()
 
 
-app = Flask(__name__)
-app.config.from_object("config")
+def create_app(config_object="config"):
+    app = Flask(__name__)
+    app.config.from_object(config_object)
 
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-login_manager = LoginManager(app)
+    db.init_app(app)
+    migrate.init_app(app, db)
+    login_manager.init_app(app)
 
-sp = spotipy.Spotify(
-    auth_manager=SpotifyOAuth(
-        client_id=app.config["SPOTIFY_CLIENT_ID"],
-        client_secret=app.config["SPOTIFY_CLIENT_SECRET"],
-        redirect_uri=app.config["SPOTIFY_REDIRECT_URI"],
-        scope="user-read-email",
-    )
-)
+    from app.blueprints.auth import auth_bp
 
-from app import routes, models
+    app.register_blueprint(auth_bp)
+
+    return app
