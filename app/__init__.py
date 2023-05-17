@@ -1,5 +1,5 @@
 # app/__init__.py
-from flask import Flask, render_template
+from flask import Flask
 from flask_login import LoginManager
 from flask_migrate import Migrate
 
@@ -18,7 +18,9 @@ def create_app(config_object="config"):
     login_manager.init_app(app)
 
     from app.blueprints.auth import auth_bp
+    from app.blueprints.insights import insights_bp
 
     app.register_blueprint(auth_bp)
+    app.register_blueprint(insights_bp)
 
     return app
