@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="text-center">
-        <h1>SongSwap</h1>
-        <p>Share and discover music with your friends.</p>
-        <a class="btn btn-primary" href="{{ auth_url }}">Login with Spotify</a>
-    </div>
+<div class="column is-half is-offset-one-quarter text-center">
+    <h1>SongSwap</h1>
+    <p>Share and discover music with your friends.</p>
+    <a class="button" href="{{ spotify_auth_url }}">Login with Spotify</a>
+</div>
 {% endblock %}
