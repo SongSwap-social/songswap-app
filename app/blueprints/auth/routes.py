@@ -5,8 +5,7 @@ from flask_login import current_user, login_required, login_user, logout_user
 from app import login_manager, oauth
 from app.database import db
 
-from .forms import RegistrationForm
-from .models import User
+from .models import SpotifyTokens, User
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -39,28 +38,35 @@ def spotify_login():
     if current_user.is_authenticated:
         return redirect(url_for("auth.home"))
     redirect_uri = url_for("auth.spotify_authorize", _external=True)
+    print(redirect_uri)
     return oauth.spotify.authorize_redirect(redirect_uri)
 
 
-@auth_bp.route("/callback")
+@auth_bp.route("/spotify/authorize")
 def spotify_authorize():
+    """Get the user's Spotify info and create a new user if they don't exist."""
     token = oauth.spotify.authorize_access_token()  # Get access token
     response = oauth.spotify.get("me")  # Get user info
-    session["spotify_user_info"] = response.json()  # Save user info to session
-    user = User.query.filter_by(spotify_id=session["spotify_user_info"]["id"]).first()
+    spotify_info = response.json()  # Save user info to session
+    user = User.query.filter_by(spotify_id=spotify_info["id"]).first()
     if not user:
         # User doesn't exist, create a new user
         user = User(
-            username=session["spotify_user_info"]["display_name"],
-            email=session["spotify_user_info"]["email"],
-            spotify_id=session["spotify_user_info"]["id"],
+            username=spotify_info["display_name"],
+            email=spotify_info["email"],
+            spotify_id=spotify_info["id"],
         )
+        tokens = SpotifyTokens(
+            spotify_id=spotify_info["id"],
+            access_token=token["access_token"],
+            refresh_token=token["refresh_token"],
+        )
+        user.spotify_tokens = tokens  # Add relationship
         db.session.add(user)
+        db.session.add(tokens)
         db.session.commit()
         flash("Account created!", "success")
 
-    # Remove the Spotify info from the session
-    session.pop("spotify_user_info", None)
     login_user(user)
     return redirect(url_for("auth.home"))
 

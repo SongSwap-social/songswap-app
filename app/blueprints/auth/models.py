@@ -8,7 +8,12 @@ class User(db.Model, flask_login.UserMixin):
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     spotify_id = db.Column(db.String(120), unique=True, nullable=False)
-    # Define relationships with other models (e.g., posts, groups)
+    spotify_tokens = db.relationship(  # Create a relationship between User and SpotifyTokens
+        "SpotifyTokens",
+        backref="user",  # Create a back reference so we can access the User from SpotifyTokens
+        lazy=True,  # Don't load tokens unless requested
+        uselist=False,  # Only one SpotifyTokens per user
+    )
 
     # Flask-Login integration
     def is_authenticated(self):
@@ -29,3 +34,10 @@ class User(db.Model, flask_login.UserMixin):
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.spotify_id}')"
+
+
+class SpotifyTokens(db.Model):
+    id = db.Column(db.Integer, db.ForeignKey("user.id"), primary_key=True)
+    spotify_id = db.Column(db.String(120), unique=True, nullable=False)
+    access_token = db.Column(db.String(120), unique=True, nullable=False)
+    refresh_token = db.Column(db.String(120), unique=True, nullable=False)
