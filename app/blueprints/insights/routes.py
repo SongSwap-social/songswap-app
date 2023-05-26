@@ -1,14 +1,44 @@
 # app/blueprints/insights/routes.py
-from flask import Blueprint, render_template
-from pyecharts import options as opts
-from pyecharts.charts import Bar
-import json
+from flask import Blueprint, abort, render_template
+from flask_login import current_user
+import requests
 
 insights_bp = Blueprint("insights", __name__)
 
 
 @insights_bp.route("/insights")
 def home():
+    """Retrieve the user's top tracks from the songswap-insights API"""
+
+    # If the user is not authenticated, raise an unauthorized error
+    if not current_user.is_authenticated:
+        abort(401)
+
+    # Get the user's ID from the session
+    user_id = current_user.spotify_id
+
+    # Send a GET request to the songswap-insights API with the user's ID as an argument
+    response = requests.get(
+        f"http://127.0.0.1:5001/insights/top-tracks", params={"user_id": user_id}
+    )
+
+    # If the response is not successful, raise an error
+    if not response.ok:
+        print(response.text)
+        print(response.status_code)
+        return abort(500)
+
+    # Get the response data as JSON
+    data = response.json()
+
+    # Render the template with the data
+    # return render_template("insights.html", data=data)
+    # Return the data as JSON
+    return data
+
+
+@insights_bp.route("/insights_mock")
+def home_mock():
     import random
     import datetime
 
