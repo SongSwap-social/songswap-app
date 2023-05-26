@@ -35,6 +35,11 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
+      - name: Prepare Elastic Beanstalk deployment package
+        run: |
+          sed -i -e "s|<aws_account_id>.dkr.ecr.<region>.amazonaws.com/<repository_name>:<tag>|${{ steps.build-image.outputs.image }}|g" Dockerrun.aws.json
+          zip deployment.zip Dockerrun.aws.json
+
       - name: Deploy to AWS Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v14
         with:
@@ -44,4 +49,4 @@ jobs:
           environment_name: ${{ vars.BEANSTALK_ENVIRONMENT_NAME }}
           version_label: ${{ github.sha }}
           region: ${{ vars.AWS_REGION }}
-          deployment_package: ${{ steps.build-image.outputs.image }}
+          deployment_package: deployment.zip
