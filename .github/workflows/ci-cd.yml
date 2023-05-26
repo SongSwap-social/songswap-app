@@ -24,29 +24,12 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build, tag, and push image to Amazon ECR
-        id: build-image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
-          IMAGE_TAG: ${{ github.sha }}
-        run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-
-      - name: Prepare Elastic Beanstalk deployment package
-        run: |
-          sed -i -e "s|<aws_account_id>.dkr.ecr.<region>.amazonaws.com/<repository_name>:<tag>|${{ steps.build-image.outputs.image }}|g" Dockerrun.aws.json
-          zip deployment.zip Dockerrun.aws.json
-
-      - name: Deploy to AWS Elastic Beanstalk
-        uses: einaregilsson/beanstalk-deploy@v14
+      - name: Build and push Docker image
+        id: docker_build
+        uses: docker/build-push-action@v2
         with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: ${{ vars.BEANSTALK_APPLICATION_NAME }}
-          environment_name: ${{ vars.BEANSTALK_ENVIRONMENT_NAME }}
-          version_label: ${{ github.sha }}
-          region: ${{ vars.AWS_REGION }}
-          deployment_package: deployment.zip
+          context: .
+          push: true
+          tags: |
+            ${{ steps.login-ecr.outputs.registry }}/songswap-app:latest
+            ${{ steps.login-ecr.outputs.registry }}/songswap-app:${{ github.sha }}
