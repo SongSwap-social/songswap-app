@@ -20,5 +20,10 @@ RUN pip install gunicorn
 # Make port 80 available to the world outside this container
 EXPOSE 80
 
+# Perform any database migrations
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+
 # Run the application using Gunicorn
 CMD ["gunicorn", "-b", ":80", "app:create_app()"]
