@@ -39,5 +39,5 @@ class User(db.Model, flask_login.UserMixin):
 class SpotifyTokens(db.Model):
     id = db.Column(db.Integer, db.ForeignKey("user.id"), primary_key=True)
     spotify_id = db.Column(db.String(120), unique=True, nullable=False)
-    access_token = db.Column(db.String(120), unique=True, nullable=False)
-    refresh_token = db.Column(db.String(120), unique=True, nullable=False)
+    access_token = db.Column(db.String(256), unique=True, nullable=False)
+    refresh_token = db.Column(db.String(256), unique=True, nullable=False)
