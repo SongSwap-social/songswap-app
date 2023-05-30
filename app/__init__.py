@@ -22,10 +22,12 @@ def create_app(config_object="config"):
 
     from app.blueprints.auth import auth_bp, register_oauth
     from app.blueprints.insights import insights_bp
+    from app.blueprints.health import health_bp
 
     register_oauth(app, oauth)
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(insights_bp)
+    app.register_blueprint(health_bp)
 
     return app
