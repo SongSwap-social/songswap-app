@@ -5,7 +5,7 @@ from flask_login import current_user, login_required, login_user, logout_user
 from app import login_manager, oauth
 from app.database import db
 
-from .models import SpotifyTokens, User
+from .models import SpotifyTokens, Users
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -29,7 +29,7 @@ def register_oauth(app: Flask, oauth: OAuth):
 @login_manager.user_loader
 def load_user(user_id):
     """Check if user is logged-in on every page load."""
-    return User.query.get(int(user_id))
+    return Users.query.get(int(user_id))
 
 
 @auth_bp.route("/spotify/login")
@@ -48,10 +48,10 @@ def spotify_authorize():
     token = oauth.spotify.authorize_access_token()  # Get access token
     response = oauth.spotify.get("me")  # Get user info
     spotify_info = response.json()  # Save user info to session
-    user = User.query.filter_by(spotify_id=spotify_info["id"]).first()
+    user = Users.query.filter_by(spotify_id=spotify_info["id"]).first()
     if not user:
         # User doesn't exist, create a new user
-        user = User(
+        user = Users(
             username=spotify_info["display_name"],
             email=spotify_info["email"],
             spotify_id=spotify_info["id"],

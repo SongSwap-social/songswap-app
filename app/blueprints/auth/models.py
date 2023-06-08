@@ -3,16 +3,19 @@ import flask_login
 from app.database import db
 
 
-class User(db.Model, flask_login.UserMixin):
+class Users(db.Model, flask_login.UserMixin):
+    __tablename__ = "users"
+
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     spotify_id = db.Column(db.String(120), unique=True, nullable=False)
-    spotify_tokens = db.relationship(  # Create a relationship between User and SpotifyTokens
+    spotify_tokens = db.relationship(  # Create a relationship between Users and SpotifyTokens
         "SpotifyTokens",
-        backref="user",  # Create a back reference so we can access the User from SpotifyTokens
+        backref="users",  # Create a back reference so we can access the Users from SpotifyTokens
         lazy=True,  # Don't load tokens unless requested
         uselist=False,  # Only one SpotifyTokens per user
+        cascade="all, delete",  # Delete SpotifyTokens when a user is deleted
     )
 
     # Flask-Login integration
@@ -33,11 +36,13 @@ class User(db.Model, flask_login.UserMixin):
         return self.username
 
     def __repr__(self):
-        return f"User('{self.username}', '{self.email}', '{self.spotify_id}')"
+        return f"Users('{self.username}', '{self.email}', '{self.spotify_id}')"
 
 
 class SpotifyTokens(db.Model):
-    id = db.Column(db.Integer, db.ForeignKey("user.id"), primary_key=True)
+    __tablename__ = "spotify_tokens"
+
+    id = db.Column(db.Integer, db.ForeignKey("users.id"), primary_key=True)
     spotify_id = db.Column(db.String(120), unique=True, nullable=False)
     access_token = db.Column(db.String(256), unique=True, nullable=False)
     refresh_token = db.Column(db.String(256), unique=True, nullable=False)
