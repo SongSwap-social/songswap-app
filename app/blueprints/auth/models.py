@@ -17,6 +17,7 @@ class Users(db.Model, flask_login.UserMixin):
         uselist=False,  # Only one SpotifyTokens per user
         cascade="all, delete",  # Delete SpotifyTokens when a user is deleted
     )
+    history = db.relationship("History", backref="user", lazy=True)
 
     # Flask-Login integration
     def is_authenticated(self):
@@ -43,6 +44,5 @@ class SpotifyTokens(db.Model):
     __tablename__ = "spotify_tokens"
 
     id = db.Column(db.Integer, db.ForeignKey("users.id"), primary_key=True)
-    spotify_id = db.Column(db.String(120), unique=True, nullable=False)
     access_token = db.Column(db.String(256), unique=True, nullable=False)
     refresh_token = db.Column(db.String(256), unique=True, nullable=False)
