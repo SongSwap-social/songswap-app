@@ -4,7 +4,7 @@ from app.database import db
 
 
 class Users(db.Model, flask_login.UserMixin):
-    __tablename__ = "users"
+    __tablename__ = "Users"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
@@ -12,10 +12,10 @@ class Users(db.Model, flask_login.UserMixin):
     spotify_id = db.Column(db.String(120), unique=True, nullable=False)
     spotify_tokens = db.relationship(  # Create a relationship between Users and SpotifyTokens
         "SpotifyTokens",
-        backref="users",  # Create a back reference so we can access the Users from SpotifyTokens
+        backref="user",  # Create a back reference so we can access the Users from SpotifyTokens
         lazy=True,  # Don't load tokens unless requested
         uselist=False,  # Only one SpotifyTokens per user
-        cascade="all, delete",  # Delete SpotifyTokens when a user is deleted
+        cascade="all, delete-orphan",  # Delete SpotifyTokens when a user is deleted
     )
     history = db.relationship("History", backref="user", lazy=True)
 
@@ -41,8 +41,8 @@ class Users(db.Model, flask_login.UserMixin):
 
 
 class SpotifyTokens(db.Model):
-    __tablename__ = "spotify_tokens"
+    __tablename__ = "SpotifyTokens"
 
-    id = db.Column(db.Integer, db.ForeignKey("users.id"), primary_key=True)
+    id = db.Column(db.Integer, db.ForeignKey("Users.id"), primary_key=True)
     access_token = db.Column(db.String(256), unique=True, nullable=False)
     refresh_token = db.Column(db.String(256), unique=True, nullable=False)
