@@ -4,7 +4,9 @@ from app.database import db
 class History(db.Model):
     __tablename__ = "history"
 
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user_id = db.Column(
+        db.Integer, db.ForeignKey("users.id"), nullable=False, primary_key=True
+    )
     played_at = db.Column(db.DateTime, nullable=False, primary_key=True)
     track_id = db.Column(db.String(24), db.ForeignKey("tracks.id"), nullable=False)
 

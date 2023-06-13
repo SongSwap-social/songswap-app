@@ -43,7 +43,7 @@ def upgrade():
     sa.Column('track_id', sa.String(length=24), nullable=False),
     sa.ForeignKeyConstraint(['track_id'], ['tracks.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
-    sa.PrimaryKeyConstraint('played_at')
+    sa.PrimaryKeyConstraint('user_id', 'played_at')
     )
     op.create_table('track_features',
     sa.Column('id', sa.String(length=24), nullable=False),
