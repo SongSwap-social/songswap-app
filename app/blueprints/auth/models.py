@@ -17,7 +17,12 @@ class Users(db.Model, flask_login.UserMixin):
         uselist=False,  # Only one SpotifyTokens per user
         cascade="all, delete-orphan",  # Delete SpotifyTokens when a user is deleted
     )
-    history = db.relationship("History", backref="user", lazy=True)
+    history = db.relationship(
+        "History",
+        backref="user",
+        lazy=True,
+        cascade="all, delete-orphan",
+    )
 
     # Flask-Login integration
     def is_authenticated(self):

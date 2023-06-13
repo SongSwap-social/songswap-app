@@ -20,16 +20,41 @@ class Artists(db.Model):
     id = db.Column(db.String(24), primary_key=True)
     name = db.Column(db.String(120), nullable=False)
 
+    # Delete the ArtistTracks when an artist is deleted
+    tracks = db.relationship(
+        "ArtistTracks",
+        backref="artist",
+        lazy=True,
+        cascade="all, delete-orphan",
+    )
+
     def __repr__(self):
         return f"Artist('{self.name}')"
 
 
 class Tracks(db.Model):
     __tablename__ = "Tracks"
+    _relationship_options = {
+        "backref": "track",
+        "lazy": True,
+        "cascade": "all, delete-orphan",
+    }
 
     id = db.Column(db.String(24), primary_key=True)
     name = db.Column(db.String(120), nullable=False)
     duration_ms = db.Column(db.Integer, nullable=False)
+
+    # Delete the ArtistTracks when a track is deleted
+    artists = db.relationship("ArtistTracks", **_relationship_options)
+
+    # Delete the TrackPopularity when a track is deleted
+    popularity = db.relationship("TrackPopularity", **_relationship_options)
+
+    # Delete the TrackFeatures when a track is deleted
+    features = db.relationship("TrackFeatures", **_relationship_options)
+
+    # Delete the History when a track is deleted
+    history = db.relationship("History", **_relationship_options)
 
     def __repr__(self):
         return f"Track('{self.name}')"
