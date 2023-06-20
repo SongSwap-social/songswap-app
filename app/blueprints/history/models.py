@@ -41,7 +41,7 @@ class Tracks(db.Model):
     }
 
     id = db.Column(db.String(24), primary_key=True)
-    name = db.Column(db.String(120), nullable=False)
+    name = db.Column(db.String(240), nullable=False)
     duration_ms = db.Column(db.Integer, nullable=False)
 
     # Delete the ArtistTracks when a track is deleted

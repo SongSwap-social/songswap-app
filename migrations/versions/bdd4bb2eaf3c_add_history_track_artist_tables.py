@@ -25,7 +25,7 @@ def upgrade():
     )
     op.create_table('tracks',
     sa.Column('id', sa.String(length=24), nullable=False),
-    sa.Column('name', sa.String(length=120), nullable=False),
+    sa.Column('name', sa.String(length=240), nullable=False),
     sa.Column('duration_ms', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
