@@ -10,6 +10,11 @@ from .models import SpotifyTokens, Users
 
 auth_bp = Blueprint("auth", __name__)
 
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 
 def register_oauth(app: Flask, oauth: OAuth):
     oauth.register(
@@ -51,8 +56,8 @@ def spotify_authorize():
     try:
         spotify_info = response.json()
     except requests.exceptions.JSONDecodeError:
-        print("Failed to decode JSON from response")
-        print("Response Content: ", response.content)
+        logger.error("Failed to decode JSON from response")
+        logger.error("Response Content: ", response.content)
         return "Error processing request", 400
     user = Users.query.filter_by(spotify_id=spotify_info["id"]).first()
     if not user:
