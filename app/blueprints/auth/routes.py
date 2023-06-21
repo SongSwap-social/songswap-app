@@ -57,7 +57,13 @@ def spotify_authorize():
         spotify_info = response.json()
     except requests.exceptions.JSONDecodeError:
         logger.error("Failed to decode JSON from response")
-        logger.error("Response Content: ", response.content)
+        logger.error("Response Content: %s", response.content)
+        if b"User not registered in the Developer Dashboard" in response.content:
+            flash(
+                "Please contact the site administrator to be added to the Developer Dashboard.",
+                "error",
+            )
+            return redirect(url_for("auth.unauth_home"))
         return "Error processing request", 400
     user = Users.query.filter_by(spotify_id=spotify_info["id"]).first()
     if not user:
@@ -68,7 +74,7 @@ def spotify_authorize():
             spotify_id=spotify_info["id"],
         )
         tokens = SpotifyTokens(
-            spotify_id=spotify_info["id"],
+            id=user.id,
             access_token=token["access_token"],
             refresh_token=token["refresh_token"],
         )
