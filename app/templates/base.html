@@ -1,23 +1,50 @@
 <!-- app/templates/base.html -->
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>SongSwap</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     {% block styles %}{% endblock %}
 </head>
+
 <body>
     {% include 'navbar.html' %}
 
     <section class="section">
         <div class="container">
+
+            <!-- Flash message handling -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="notification is-{{ category }}">
+                            <button class="delete"></button>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
             {% block content %}{% endblock %}
         </div>
     </section>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <script>
+        // Make the Bulma flash messages dismissible
+        document.addEventListener('DOMContentLoaded', () => {
+            (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+                const $notification = $delete.parentNode;
+
+                $delete.addEventListener('click', () => {
+                    $notification.parentNode.removeChild($notification);
+                });
+            });
+        });
+    </script>
     {% block scripts %}{% endblock %}
 </body>
+
 </html>

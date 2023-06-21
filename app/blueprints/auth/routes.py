@@ -61,7 +61,7 @@ def spotify_authorize():
         if b"User not registered in the Developer Dashboard" in response.content:
             flash(
                 "Please contact the site administrator to be added to the Developer Dashboard.",
-                "error",
+                "danger",
             )
             return redirect(url_for("auth.unauth_home"))
         return "Error processing request", 400
