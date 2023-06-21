@@ -1,6 +1,7 @@
 from authlib.integrations.flask_client import OAuth
 from flask import Blueprint, Flask, flash, redirect, render_template, session, url_for
 from flask_login import current_user, login_required, login_user, logout_user
+import requests
 
 from app import login_manager, oauth
 from app.database import db
@@ -47,7 +48,12 @@ def spotify_authorize():
     """Get the user's Spotify info and create a new user if they don't exist."""
     token = oauth.spotify.authorize_access_token()  # Get access token
     response = oauth.spotify.get("me")  # Get user info
-    spotify_info = response.json()  # Save user info to session
+    try:
+        spotify_info = response.json()
+    except requests.exceptions.JSONDecodeError:
+        print("Failed to decode JSON from response")
+        print("Response Content: ", response.content)
+        return "Error processing request", 400
     user = Users.query.filter_by(spotify_id=spotify_info["id"]).first()
     if not user:
         # User doesn't exist, create a new user
