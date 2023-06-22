@@ -1,7 +1,7 @@
 """Initial DB migration
 
 Revision ID: 4ba4facc166c
-Revises: 
+Revises:
 Create Date: 2023-06-02 20:11:02.162055
 
 """
@@ -26,7 +26,6 @@ def upgrade():
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('spotify_id'),
-    sa.UniqueConstraint('username')
     )
     op.create_table('spotify_tokens',
     sa.Column('id', sa.Integer(), nullable=False),

@@ -7,7 +7,7 @@ class Users(db.Model, flask_login.UserMixin):
     __tablename__ = "Users"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(20), unique=True, nullable=False)
+    username = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     spotify_id = db.Column(db.String(120), unique=True, nullable=False)
     spotify_tokens = db.relationship(  # Create a relationship between Users and SpotifyTokens
