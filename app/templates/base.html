@@ -3,18 +3,21 @@
 <html lang="en">
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
     <title>SongSwap</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     {% block styles %}{% endblock %}
 </head>
 
 <body>
     {% include 'navbar.html' %}
 
-    <section class="section">
-        <div class="container">
+    <section class="section hero is-dark is-fullheight-with-navbar">
 
+        <div class="container">
             <!-- Flash message handling -->
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
