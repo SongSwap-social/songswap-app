@@ -8,9 +8,23 @@
     <div class="navbar-menu">
         <div class="navbar-start">
             {% if current_user.is_authenticated %}
-            <a class="navbar-item" href="{{ url_for('auth.home') }}">Notifications</a>
-            <a class="navbar-item" href="{{ url_for('auth.home') }}">Groups</a>
-            <a class="navbar-item" href="{{ url_for('insights.home') }}">Insights</a>
+
+            <a class="navbar-item" href="{{ url_for('auth.home') }}">
+                <div>
+                    <span class="icon">
+                        <i class="fa fa-users"></i>
+                    </span>
+                    Groups
+                </div>
+            </a>
+            <a class="navbar-item" href="{{ url_for('insights.home') }}">
+                <div>
+                    <span class="icon">
+                        <i class="fa fa-area-chart"></i>
+                    </span>
+                    Insights
+                </div>
+            </a>
             {% endif %}
         </div>
 
@@ -34,7 +48,7 @@
                     <a class="navbar-item" href="{{ url_for('auth.home') }}">
                         <div>
                             <span class="icon">
-                                <i class="fa fa-id-card-o"></i>
+                                <i class="fa fa-cog"></i>
                             </span>
                             Account
                         </div>
