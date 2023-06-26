@@ -1,0 +1,105 @@
+<!-- app/templates/insights_global.html -->
+{% extends "base.html" %}
+{% block content %}
+<!-- Begin Row#1 -->
+<!-- Col#1: Total number of tracks listened to for all users -->
+<div class="hero-head">
+    <section class="container">
+        <h1 class="title">
+            Global Insights
+        </h1>
+        <div class="hero-body">
+            <h2 class="subtitle">
+                Here are some insights about all users.
+            </h2>
+        </div>
+    </section>
+</div>
+
+<section class="container justify-content is-justify-content-space-evenly ">
+    <!-- Begin Row#1 -->
+    <section class="info-tiles is-fluid ">
+        <div class="tile is-ancestor has-text-centered ">
+            <div class="tile is-parent">
+                <article class="tile is-child box">
+                    <p class="heading">Total Listens</p>
+                    <p class="title has-text-primary">{{ total_tracks }}</p>
+                </article>
+            </div>
+            <div class="tile is-parent">
+                <article class="tile is-child box">
+                    <p class="heading">Unique Tracks</p>
+                    <p class="title has-text-primary">{{ distinct_tracks }}</p>
+                </article>
+            </div>
+            <div class="tile is-parent">
+                <article class="tile is-child box">
+                    <p class="heading">Unique Artists</p>
+                    <p class="title has-text-primary">{{ distinct_artists }}</p>
+                </article>
+            </div>
+            <div class="tile is-parent is-flex-grow-2">
+                <article class="tile is-child box">
+                    <p class="heading">Total Listen
+                        Duration</p>
+                    <p class="title has-text-primary">{{ total_listen_time }}</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="columns is-fluid">
+        <!-- Top 10 Artists -->
+        <div class="column is-4">
+            <div class="box content is-fullheight">
+                <p class="heading has-text-centered">Top 10 Artists</p>
+                <table id="top_artists">
+                    <thead>
+                        <tr>
+                            <th>Artist</th>
+                            <th>Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for artist in top_artists %}
+                        <tr>
+                            <td>{{ artist.artist_name }}</td>
+                            <td>{{ artist.count }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="column is-8">
+            <div class="box content">
+                <p class="heading has-text-centered">Top 10 Tracks</p>
+                <table id="top-tracks">
+                    <thead>
+                        <tr>
+                            <th>Artist</th>
+                            <th>Track</th>
+                            <th>Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for track in top_tracks %}
+                        <tr>
+                            <td>{{ track.artist_name }}</td>
+                            <td>{{ track.track_name }}</td>
+                            <td>{{ track.count }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</section>
+
+
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+{% endblock %}
