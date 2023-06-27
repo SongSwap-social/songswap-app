@@ -82,6 +82,9 @@ class Tracks(db.Model):
     # Delete the TrackImages when a track is deleted
     images = db.relationship("TrackImages", **_relationship_options)
 
+    # Delete the TrackPreviews when a track is deleted
+    previews = db.relationship("TrackPreviews", **_relationship_options)
+
     def __repr__(self):
         return f"Track('{self.name}')"
 
@@ -142,6 +145,15 @@ class TrackImages(db.Model):
     )
     height = db.Column(db.Integer, nullable=False, primary_key=True)
     width = db.Column(db.Integer, nullable=False, primary_key=True)
+    url = db.Column(db.String(240), nullable=False)
+
+
+class TrackPreviews(db.Model):
+    __tablename__ = "TrackPreviews"
+
+    id = db.Column(
+        db.String(24), db.ForeignKey("Tracks.id", **CASCADE), primary_key=True
+    )
     url = db.Column(db.String(240), nullable=False)
 
 
