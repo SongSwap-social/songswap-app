@@ -1,0 +1,1 @@
+The .ebextensions directory is a feature of AWS Elastic Beanstalk that allows you to add custom configurations to your environment. By placing a `*.config` file in a directory named `.ebextensions` within your project's root directory, you can add commands, container commands, options settings, and resources that AWS will apply when launching your environment.

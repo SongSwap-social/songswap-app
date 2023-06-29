@@ -1,0 +1,97 @@
+<!-- app/templates/insights.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<section class="container" id="playlist">
+    <section class="columns">
+        <!-- <div class="list has-overflow-ellipsis has-visible-pointer-controls has-hoverable-list-items"> -->
+        <div class="column">
+            <div class="box content">
+                <p class="heading has-text-centered">Top 10 Tracks</p>
+                <table id="top-tracks">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Track</th>
+                            <th>Plays</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for track in tracks %}
+                        <tr>
+                            <td style="text-align:center; vertical-align:middle;font-weight:bold;">{{ loop.index }}</td>
+                            <td>
+                                <div class="level">
+                                    <div class="level-item level-left list-item-image" style="max-width:fit-content;">
+                                        <figure class="image is-64x64" style="margin-left:0;margin-right:0;">
+                                            <img src="https://ia801504.us.archive.org/35/items/mbid-2e999a18-f74d-49f4-8e01-d4f354ad5a32/mbid-2e999a18-f74d-49f4-8e01-d4f354ad5a32-30261100157.jpg"
+                                                alt="Friends That Break Your Heart">
+                                        </figure>
+                                    </div>
+
+                                    <div class="level-item list-item-content" style="align-items:start;">
+                                        <div class="list-item-title" style="text-overflow:ellipsis;">
+                                            {{ track.track_name }}
+                                        </div>
+
+                                        <div class="description">
+                                            {{ track.artist_name }} · {{ track.duration_str }}
+                                        </div>
+                                    </div>
+
+                                    <div class="level-item level-right list-item-controls">
+                                        <div class="buttons">
+                                            <button id="openModalButton" class="button is-small is-light is-hidden-mobile">
+                                                <span class="icon">
+                                                    <i class="fa fa-play"></i>
+                                                </span>
+                                            </button>
+
+                                            <button class="button is-small is-light">
+                                                <span class="icon">
+                                                    <i class="fa fa-ellipsis-v"></i>
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle;">{{ track.count }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal" id="myModal">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <!-- Any other Bulma elements you want -->
+        </div>
+        <button class="modal-close is-large" aria-label="close"></button>
+    </div>
+
+</section>
+
+
+
+{% endblock %}
+
+{% block scripts %}
+
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+
+<script>
+    document.getElementById('openModalButton').addEventListener('click', function () {
+        document.getElementById('myModal').classList.add('is-active');
+    });
+
+    document.querySelector('.modal-close').addEventListener('click', function () {
+        document.getElementById('myModal').classList.remove('is-active');
+    });
+</script>
+
+{% endblock %}

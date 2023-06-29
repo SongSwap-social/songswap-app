@@ -1,15 +1,91 @@
-# app/blueprints/auth/routes.py
-from flask import Blueprint, redirect, render_template, request, session, url_for
+from authlib.integrations.flask_client import OAuth
+from flask import Blueprint, Flask, flash, redirect, render_template, session, url_for
 from flask_login import current_user, login_required, login_user, logout_user
+import requests
 
-from app import login_manager
+from app import login_manager, oauth
 from app.database import db
 
-from .forms import RegistrationForm
-from .models import User
-from .providers import SpotifyAuthProvider
+from .models import SpotifyTokens, Users
 
 auth_bp = Blueprint("auth", __name__)
+
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+
+def register_oauth(app: Flask, oauth: OAuth):
+    oauth.register(
+        name="spotify",
+        client_id=app.config["SPOTIFY_CLIENT_ID"],
+        client_secret=app.config["SPOTIFY_CLIENT_SECRET"],
+        access_token_url="https://accounts.spotify.com/api/token",
+        access_token_params=None,
+        authorize_url="https://accounts.spotify.com/authorize",
+        authorize_params=None,
+        api_base_url="https://api.spotify.com/v1/",
+        client_kwargs={
+            "scope": "user-library-read user-read-recently-played user-top-read user-read-currently-playing user-read-email"
+        },
+    )
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    """Check if user is logged-in on every page load."""
+    return Users.query.get(int(user_id))
+
+
+@auth_bp.route("/spotify/login")
+def spotify_login():
+    """Redirect user to Spotify OAuth page to login and authorize the app."""
+    if current_user.is_authenticated:
+        return redirect(url_for("auth.home"))
+    redirect_uri = url_for("auth.spotify_authorize", _external=True)
+    print(redirect_uri)
+    return oauth.spotify.authorize_redirect(redirect_uri)
+
+
+@auth_bp.route("/spotify/authorize")
+def spotify_authorize():
+    """Get the user's Spotify info and create a new user if they don't exist."""
+    token = oauth.spotify.authorize_access_token()  # Get access token
+    response = oauth.spotify.get("me")  # Get user info
+    try:
+        spotify_info = response.json()
+    except requests.exceptions.JSONDecodeError:
+        logger.error("Failed to decode JSON from response")
+        logger.error("Response Content: %s", response.content)
+        if b"User not registered in the Developer Dashboard" in response.content:
+            flash(
+                "Please contact the site administrator to be added to the Developer Dashboard.",
+                "danger",
+            )
+            return redirect(url_for("auth.unauth_home"))
+        return "Error processing request", 400
+    user = Users.query.filter_by(spotify_id=spotify_info["id"]).first()
+    if not user:
+        # User doesn't exist, create a new user
+        user = Users(
+            username=spotify_info["display_name"],
+            email=spotify_info["email"],
+            spotify_id=spotify_info["id"],
+        )
+        tokens = SpotifyTokens(
+            id=user.id,
+            access_token=token["access_token"],
+            refresh_token=token["refresh_token"],
+        )
+        user.spotify_tokens = tokens  # Add relationship
+        db.session.add(user)
+        db.session.add(tokens)
+        db.session.commit()
+        flash("Account created!", "success")
+
+    login_user(user)
+    return redirect(url_for("auth.home"))
 
 
 @login_manager.unauthorized_handler
@@ -18,77 +94,15 @@ def unauthorized_callback():
     return redirect(url_for("auth.unauth_home"))
 
 
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
-
-
-@auth_bp.route("/callback")
-def spotify_callback():
-    code = request.args.get("code")
-
-    auth_provider = SpotifyAuthProvider()
-    auth_provider.get_access_token(code, check_cache=False)
-    me = auth_provider.me()
-
-    spotify_id = me["id"]
-    user = User.query.filter_by(spotify_id=spotify_id).first()
-    if user:
-        # User exists, log them in and redirect to authorized home page
-        login_user(user)
-        return redirect(url_for("auth.home"))
-    else:
-        # User does not exist, redirect to registration form
-        # Store the tokens in the session
-        session["spotify_id"] = spotify_id
-        cached_tokens = auth_provider.get_cached_tokens()
-        session["access_token"] = cached_tokens["access_token"]
-        session["refresh_token"] = cached_tokens["refresh_token"]
-        session["expires_at"] = cached_tokens["expires_at"]
-
-        return redirect(url_for("auth.register"))
-
-
-@auth_bp.route("/register", methods=["GET", "POST"])
-def register():
-    # If user is authenticated, redirect to /home
-    if current_user.is_authenticated:
-        return redirect(url_for("auth.home"))
-
-    form = RegistrationForm()
-
-    if form.validate_on_submit():
-        user = User(
-            username=form.username.data,
-            email=form.email.data,
-            spotify_id=session["spotify_id"],
-            access_token=session["access_token"],
-            refresh_token=session["refresh_token"],
-            expires_at=session["expires_at"],
-        )
-        db.session.add(user)
-        db.session.commit()
-
-        # Remove the stored variables from the session
-        session.pop("spotify_id", None)
-        session.pop("access_token", None)
-        session.pop("refresh_token", None)
-        session.pop("expires_at", None)
-
-        return redirect(url_for("auth.home"))
-
-    return render_template("register.html", form=form)
-
-
 @auth_bp.route("/")
 def unauth_home():
     # If user is authenticated, redirect to /home
     if current_user.is_authenticated:
         return redirect(url_for("auth.home"))
     else:
-        auth_provider = SpotifyAuthProvider()
-        auth_url = auth_provider.get_authorize_url()
-        return render_template("unauth_home.html", auth_url=auth_url)
+        return render_template(
+            "unauth_home.html", spotify_auth_url=url_for("auth.spotify_login")
+        )
 
 
 @auth_bp.route("/home")
