@@ -18,8 +18,8 @@ def home():
 
     # Send a GET request to the songswap-insights API with the user's ID as an argument
     response = requests.get(
-        f"http://127.0.0.1:5001/insights/top-tracks",
-        params={"user_id": user_id, "limit": TOP_LIMIT},
+        f"http://127.0.0.1:5001/insights/top/tracks/{user_id}",
+        params={"limit": TOP_LIMIT},
     )
 
     # If the response is not successful, raise an error
@@ -30,6 +30,12 @@ def home():
 
     # Get the response data as JSON
     data = response.json()
+
+    # Convert data['duration_ms'] to minutes and seconds
+    for track in data:
+        track[
+            "duration_str"
+        ] = f"{track['duration_ms'] // 60000}:{(track['duration_ms'] % 60000) // 1000:02}"
 
     # Render the template with the data
     # return render_template("insights.html", data=data)
@@ -57,10 +63,16 @@ def home_global():
     top_tracks = requests.get(
         "http://127.0.0.1:5001/insights/global/top/tracks", params={"limit": TOP_LIMIT}
     )
+    top_artists = requests.get(
+        "http://127.0.0.1:5001/insights/global/top/artists", params={"limit": TOP_LIMIT}
+    )
+
     top_tracks_json = top_tracks.json()
+    top_artists_json = top_artists.json()
     track_names = [track["track_name"] for track in top_tracks_json]
     artist_names = [track["artist_name"] for track in top_tracks_json]
     track_counts = [track["count"] for track in top_tracks_json]
+
     top_tracks = [
         {"track_name": track_name, "artist_name": artist_name, "count": count}
         for track_name, artist_name, count in zip(
@@ -68,8 +80,8 @@ def home_global():
         )
     ]
     top_artists = [
-        {"artist_name": artist_name, "count": count}
-        for artist_name, count in zip(artist_names, track_counts)
+        {"artist_name": artist["artist_name"], "count": artist["count"]}
+        for artist in top_artists_json
     ]
 
     # Send a GET request to the songswap-insights API with the user's ID as an argument
