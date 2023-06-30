@@ -18,7 +18,7 @@ def home():
 
     # Send a GET request to the songswap-insights API with the user's ID as an argument
     response = requests.get(
-        f"http://127.0.0.1:5001/insights/top/tracks/{user_id}",
+        f"http://localhost:5001/insights/top/tracks/{user_id}",
         params={"limit": TOP_LIMIT},
     )
 
@@ -48,23 +48,23 @@ def home():
 def home_global():
     """Retrieve total and distinct statistics from songswap-insights API"""
 
-    total_tracks = requests.get(f"http://127.0.0.1:5001/insights/global/total/listens")
+    total_tracks = requests.get(f"http://localhost:5001/insights/global/total/listens")
     distinct_tracks = requests.get(
-        f"http://127.0.0.1:5001/insights/global/distinct/tracks"
+        f"http://localhost:5001/insights/global/distinct/tracks"
     )
     distinct_artists = requests.get(
-        f"http://127.0.0.1:5001/insights/global/distinct/primary-artists"
+        f"http://localhost:5001/insights/global/distinct/primary-artists"
     )
     total_listen_time = requests.get(
-        f"http://127.0.0.1:5001/insights/global/total/listen-time",
+        f"http://localhost:5001/insights/global/total/listen-time",
         params={"as_string": True},
     )
 
     top_tracks = requests.get(
-        "http://127.0.0.1:5001/insights/global/top/tracks", params={"limit": TOP_LIMIT}
+        "http://localhost:5001/insights/global/top/tracks", params={"limit": TOP_LIMIT}
     )
     top_artists = requests.get(
-        "http://127.0.0.1:5001/insights/global/top/artists", params={"limit": TOP_LIMIT}
+        "http://localhost:5001/insights/global/top/artists", params={"limit": TOP_LIMIT}
     )
 
     top_tracks_json = top_tracks.json()
