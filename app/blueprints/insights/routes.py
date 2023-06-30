@@ -1,11 +1,11 @@
 # app/blueprints/insights/routes.py
 import requests
-from flask import Blueprint, abort, render_template
+from flask import Blueprint, render_template
 from flask_login import current_user, login_required
 
-insights_bp = Blueprint("insights", __name__)
+from .helpers import _get, get_top_tracks
 
-TOP_LIMIT = 10
+insights_bp = Blueprint("insights", __name__)
 
 
 @insights_bp.route("/insights")
@@ -16,20 +16,8 @@ def home():
     # Get the user's ID from the session
     user_id = current_user.id
 
-    # Send a GET request to the songswap-insights API with the user's ID as an argument
-    response = requests.get(
-        f"http://songswap-insights:5001/insights/top/tracks/{user_id}",
-        params={"limit": TOP_LIMIT},
-    )
-
-    # If the response is not successful, raise an error
-    if not response.ok:
-        print(response.text)
-        print(response.status_code)
-        return abort(500)
-
     # Get the response data as JSON
-    data = response.json()
+    data = get_top_tracks(user_id)
 
     # Convert data['duration_ms'] to minutes and seconds
     for track in data:
@@ -38,8 +26,6 @@ def home():
         ] = f"{track['duration_ms'] // 60000}:{(track['duration_ms'] % 60000) // 1000:02}"
 
     # Render the template with the data
-    # return render_template("insights.html", data=data)
-    # Return the data as JSON
     return render_template("insights.html", tracks=data)
 
 
@@ -48,27 +34,27 @@ def home():
 def home_global():
     """Retrieve total and distinct statistics from songswap-insights API"""
 
-    total_tracks = requests.get(f"http://songswap-insights:5001/insights/global/total/listens")
-    distinct_tracks = requests.get(
-        f"http://songswap-insights:5001/insights/global/distinct/tracks"
+    total_tracks_json = _get("/insights/global/total/listens", as_json=True)
+    distinct_tracks_json = _get("/insights/global/distinct/tracks", as_json=True)
+    distinct_artists_json = _get(
+        "/insights/global/distinct/primary-artists", as_json=True
     )
-    distinct_artists = requests.get(
-        f"http://songswap-insights:5001/insights/global/distinct/primary-artists"
-    )
-    total_listen_time = requests.get(
-        f"http://songswap-insights:5001/insights/global/total/listen-time",
+    total_listen_time = _get(
+        "/insights/global/total/listen-time",
         params={"as_string": True},
     )
 
-    top_tracks = requests.get(
-        "http://songswap-insights:5001/insights/global/top/tracks", params={"limit": TOP_LIMIT}
+    top_tracks_json = _get(
+        "/insights/global/top/tracks",
+        params={"limit": 10},
+        as_json=True,
     )
-    top_artists = requests.get(
-        "http://songswap-insights:5001/insights/global/top/artists", params={"limit": TOP_LIMIT}
+    top_artists_json = _get(
+        "/insights/global/top/artists",
+        params={"limit": 10},
+        as_json=True,
     )
 
-    top_tracks_json = top_tracks.json()
-    top_artists_json = top_artists.json()
     track_names = [track["track_name"] for track in top_tracks_json]
     artist_names = [track["artist_name"] for track in top_tracks_json]
     track_counts = [track["count"] for track in top_tracks_json]
@@ -84,12 +70,11 @@ def home_global():
         for artist in top_artists_json
     ]
 
-    # Send a GET request to the songswap-insights API with the user's ID as an argument
     return render_template(
         "insights_global.html",
-        total_tracks=total_tracks.json(),
-        distinct_tracks=distinct_tracks.json(),
-        distinct_artists=distinct_artists.json(),
+        total_tracks=total_tracks_json,
+        distinct_tracks=distinct_tracks_json,
+        distinct_artists=distinct_artists_json,
         total_listen_time=total_listen_time.content.decode("utf-8").replace('"', ""),
         top_tracks=top_tracks,
         top_artists=top_artists,
