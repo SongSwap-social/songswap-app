@@ -1,4 +1,4 @@
 # app/blueprints/insights/__init__.py
-from . import routes, forms
+from . import routes
 
 insights_bp = routes.insights_bp
