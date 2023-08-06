@@ -10,14 +10,14 @@
 <img src="https://img.shields.io/badge/Docker-3.8-2496ED.svg?style&logo=Docker&logoColor=2496ED" alt="Docker" />
 <img src="https://img.shields.io/badge/Python-3.10.12-3776AB.svg?style&logo=Python&logoColor=3776AB" alt="Python" />
 <img src="https://img.shields.io/badge/Flask-2.3.2-000000.svg?style&logo=Flask&logoColor=white" alt="Flask" />
-
+<br>
 <img src="https://img.shields.io/badge/PostgreSQL-4169E1.svg?style&logo=postgresql&logoColor=white" alt="postgresql" />
-<img src="https://img.shields.io/badge/Spotipy-2.23.0-1DB954.svg?style&logo=spotify&logoColor=1DB954&link=https://github.com/spotipy-dev/spotipy" alt="Spotipy" />
-
-<img src="https://img.shields.io/badge/Apache_ECharts-5.4.2-AA344D.svg?style&logo=apacheecharts&logoColor=AA344D&link=https://github.com/apache/echarts" alt="apacheecharts" />
-<img src="https://img.shields.io/badge/Bulma-0.9.4-00D1B2.svg?style&logo=bulma&logoColor=00D1B2&link=https://github.com/jgthms/bulma" alt="bulma" />
-<img src="https://img.shields.io/badge/FontAwesome-4.7.0-528DD7.svg?style&logo=fontawesome&logoColor=528DD7" alt="fontawesome" />
-
+<a href="https://github.com/spotipy-dev/spotipy"><img src="https://img.shields.io/badge/Spotipy-2.23.0-1DB954.svg?style&logo=spotify&logoColor=1DB954" alt="Spotipy" /></a>
+<br>
+<a href="https://github.com/apache/echarts"><img src="https://img.shields.io/badge/Apache_ECharts-5.4.2-AA344D.svg?style&logo=apacheecharts&logoColor=AA344D" alt="apacheecharts" /></a>
+<a href="https://github.com/jgthms/bulma"><img src="https://img.shields.io/badge/Bulma-0.9.4-00D1B2.svg?style&logo=bulma&logoColor=00D1B2" alt="bulma" /></a>
+<img src="https://img.shields.io/badge/FontAwesome-4.7.0-528DD7.svg?style&logo=fontawesome&logoColor=528DD7" />
+<br>
 <img src="https://img.shields.io/badge/Amazon RDS-527FFF.svg?style&logo=amazonrds&logoColor=white" alt="Amazon RDS" />
 <img src="https://img.shields.io/badge/Amazon S3-569A31.svg?style&logo=amazons3&logoColor=white" alt="Amazon S3" />
 <img src="https://img.shields.io/badge/Amazon EC2-FF9900.svg?style&logo=amazonec2&logoColor=white" alt="Amazon EC2" />
