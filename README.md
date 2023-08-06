@@ -12,10 +12,10 @@
 <img src="https://img.shields.io/badge/Flask-2.3.2-000000.svg?style&logo=Flask&logoColor=white" alt="Flask" />
 
 <img src="https://img.shields.io/badge/PostgreSQL-4169E1.svg?style&logo=postgresql&logoColor=white" alt="postgresql" />
-<object data="https://img.shields.io/badge/Spotipy-2.23.0-1DB954.svg?style&logo=spotify&logoColor=1DB954&link=https://github.com/spotipy-dev/spotipy" alt="Spotipy" > </object>
+<img src="https://img.shields.io/badge/Spotipy-2.23.0-1DB954.svg?style&logo=spotify&logoColor=1DB954&link=https://github.com/spotipy-dev/spotipy" alt="Spotipy" />
 
-<object data="https://img.shields.io/badge/Apache_ECharts-5.4.2-AA344D.svg?style&logo=apacheecharts&logoColor=AA344D&link=https://github.com/apache/echarts" alt="apacheecharts" > </object>
-<object data="https://img.shields.io/badge/Bulma-0.9.4-00D1B2.svg?style&logo=bulma&logoColor=00D1B2&link=https://github.com/jgthms/bulma" alt="bulma" > </object>
+<img src="https://img.shields.io/badge/Apache_ECharts-5.4.2-AA344D.svg?style&logo=apacheecharts&logoColor=AA344D&link=https://github.com/apache/echarts" alt="apacheecharts" />
+<img src="https://img.shields.io/badge/Bulma-0.9.4-00D1B2.svg?style&logo=bulma&logoColor=00D1B2&link=https://github.com/jgthms/bulma" alt="bulma" />
 <img src="https://img.shields.io/badge/FontAwesome-4.7.0-528DD7.svg?style&logo=fontawesome&logoColor=528DD7" alt="fontawesome" />
 
 <img src="https://img.shields.io/badge/Amazon RDS-527FFF.svg?style&logo=amazonrds&logoColor=white" alt="Amazon RDS" />
